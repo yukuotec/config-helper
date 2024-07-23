@@ -47,6 +47,8 @@ func newFileTask(taskType string, params map[string]string) (Task, error) {
 		return files.NewLineInFileTask(params)
 	case "replaceInFile":
 		return files.NewReplaceInFileTask(params)
+	case "fileUpload":
+		return files.NewFileUploadTask(params)
 	// Add other file tasks here
 	default:
 		return nil, fmt.Errorf("unknown file task type: %s", taskType)

@@ -29,3 +29,13 @@ tasks:
     type: "shellExec"
     parameters:
       command: "hostname -f"
+  - category: "files"
+    type: "fileUpload"
+    parameters:
+      localPath: "./test.yaml"
+      remotePath: "/tmp/test.yaml"
+  - category: "files"
+    type: "fileUpload"
+    parameters:
+      localPath: "./test.yaml"
+      remotePath: "/tmp/test2.yaml"
