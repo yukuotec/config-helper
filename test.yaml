@@ -1,0 +1,27 @@
+host:
+  host: "localhost:2222"
+  user: "vagrant"
+  keyPath: "./private_key"
+
+facts:
+  commands:
+    - "cat /proc/meminfo | grep MemTotal"
+
+tasks:
+  - category: "dirs"
+    type: "ensureDir"
+    parameters:
+      path: "/tmp/mydir"
+      owner: "vagrant"
+      mode: "0755"
+  - category: "files"
+    type: "lineInFile"
+    parameters:
+      filePath: "/etc/example.conf"
+      line: "new_configuration_option=value"
+  - category: "files"
+    type: "replaceInFile"
+    parameters:
+      filePath: "/etc/example.conf"
+      oldPattern: "old_option"
+      newPattern: "new_option"

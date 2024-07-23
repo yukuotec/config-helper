@@ -1,63 +1,63 @@
-// sshclient/sshclient.go
 package sshclient
 
 import (
-    "fmt"
-    "golang.org/x/crypto/ssh"
-    "io/ioutil"
+	"io/ioutil"
+	"log"
+
+	"golang.org/x/crypto/ssh"
 )
 
-// Client manages SSH connections.
+// Client wraps an SSH client
 type Client struct {
-    *ssh.Client
-    Config *ssh.ClientConfig
+	client *ssh.Client
 }
 
-// NewClient creates a new SSH client.
-func NewClient(user, keyPath, host string) (*Client, error) {
-    // Load the private key
-    key, err := ioutil.ReadFile(keyPath)
-    if err != nil {
-        return nil, fmt.Errorf("failed to read private key: %w", err)
-    }
+// NewClient creates a new SSH client
+func NewClient(host, user, keyPath string) (*Client, error) {
+	key, err := ioutil.ReadFile(keyPath)
+	if err != nil {
+		return nil, err
+	}
+	signer, err := ssh.ParsePrivateKey(key)
+	if err != nil {
+		return nil, err
+	}
 
-    // Parse the private key
-    signer, err := ssh.ParsePrivateKey(key)
-    if err != nil {
-        return nil, fmt.Errorf("failed to parse private key: %w", err)
-    }
+	config := &ssh.ClientConfig{
+		User: user,
+		Auth: []ssh.AuthMethod{
+			ssh.PublicKeys(signer),
+		},
+		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
+	}
 
-    // Create SSH client configuration
-    config := &ssh.ClientConfig{
-        User: user,
-        Auth: []ssh.AuthMethod{
-            ssh.PublicKeys(signer),
-        },
-        HostKeyCallback: ssh.InsecureIgnoreHostKey(),
-    }
+	client, err := ssh.Dial("tcp", host, config)
+	if err != nil {
+		return nil, err
+	}
 
-    // Connect to the SSH server
-    client, err := ssh.Dial("tcp", host, config)
-    if err != nil {
-        return nil, fmt.Errorf("failed to dial: %w", err)
-    }
-
-    return &Client{Client: client, Config: config}, nil
+	return &Client{client: client}, nil
 }
 
-// RunCommand executes a command on the remote server.
+// RunCommand runs a command on the remote machine
 func (c *Client) RunCommand(cmd string) (string, error) {
-    session, err := c.NewSession()
-    if err != nil {
-        return "", fmt.Errorf("failed to create session: %w", err)
-    }
-    defer session.Close()
+	session, err := c.client.NewSession()
+	if err != nil {
+		return "", err
+	}
+	defer session.Close()
 
-    output, err := session.CombinedOutput(cmd)
-    if err != nil {
-        return "", fmt.Errorf("failed to run command: %w", err)
-    }
+	output, err := session.CombinedOutput(cmd)
+	if err != nil {
+		return "", err
+	}
 
-    return string(output), nil
+	return string(output), nil
 }
 
+// Close closes the SSH connection
+func (c *Client) Close() {
+	if err := c.client.Close(); err != nil {
+		log.Printf("Error closing SSH client: %v", err)
+	}
+}
