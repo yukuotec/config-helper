@@ -25,3 +25,7 @@ tasks:
       filePath: "/etc/example.conf"
       oldPattern: "old_option"
       newPattern: "new_option"
+  - category: "shell"
+    type: "shellExec"
+    parameters:
+      command: "hostname -f"

@@ -3,6 +3,7 @@ package task
 import (
 	"config-helper/dirs"
 	"config-helper/files"
+	"config-helper/shell"
 	"config-helper/sshclient"
 	"fmt"
 )
@@ -22,6 +23,8 @@ func NewTask(category string, taskType string, params map[string]string) (Task, 
 		return newFileTask(taskType, params)
 	case "networking":
 		return newNetworkTask(taskType, params)
+	case "shell":
+		return newShellTask(taskType, params)
 	// Add other categories here
 	default:
 		return nil, fmt.Errorf("unknown task category: %s", category)
@@ -53,4 +56,14 @@ func newFileTask(taskType string, params map[string]string) (Task, error) {
 func newNetworkTask(taskType string, params map[string]string) (Task, error) {
 	// Define and implement network tasks similarly
 	return nil, fmt.Errorf("network tasks not implemented")
+}
+
+func newShellTask(taskType string, params map[string]string) (Task, error) {
+	switch taskType {
+	case "shellExec":
+		return shell.NewShellExecTask(params)
+	// Add other file tasks here
+	default:
+		return nil, fmt.Errorf("unknown shell task type: %s", taskType)
+	}
 }
