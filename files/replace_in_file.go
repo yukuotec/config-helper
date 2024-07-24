@@ -1,6 +1,7 @@
 package files
 
 import (
+	"config-helper/config"
 	"config-helper/sshclient"
 	"fmt"
 )
@@ -13,16 +14,16 @@ type ReplaceInFileTask struct {
 }
 
 // NewReplaceTask creates a new ReplaceTask
-func NewReplaceInFileTask(params map[string]string) (*ReplaceInFileTask, error) {
-	filePath, ok := params["filePath"]
+func NewReplaceInFileTask(params config.TaskParameters) (*ReplaceInFileTask, error) {
+	filePath, ok := params["filePath"].(string)
 	if !ok {
 		return nil, fmt.Errorf("missing parameter: filePath")
 	}
-	oldPattern, ok := params["oldPattern"]
+	oldPattern, ok := params["oldPattern"].(string)
 	if !ok {
 		return nil, fmt.Errorf("missing parameter: oldPattern")
 	}
-	newPattern, ok := params["newPattern"]
+	newPattern, ok := params["newPattern"].(string)
 	if !ok {
 		return nil, fmt.Errorf("missing parameter: newPattern")
 	}

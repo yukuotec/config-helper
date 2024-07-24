@@ -37,7 +37,7 @@ func main() {
 
 	// Execute tasks
 	for _, taskConfig := range cfg.Tasks {
-		t, err := task.NewTask(taskConfig.Category, taskConfig.Type, taskConfig.Parameters)
+		t, err := task.NewTask(taskConfig.Category, taskConfig.Type, taskConfig.TaskParameters)
 		if err != nil {
 			log.Fatalf("Failed to create task: %v", err)
 		}

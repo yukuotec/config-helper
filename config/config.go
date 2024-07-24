@@ -1,7 +1,7 @@
 package config
 
 import (
-	"io/ioutil"
+	"os"
 
 	"gopkg.in/yaml.v2"
 )
@@ -13,10 +13,12 @@ type HostConfig struct {
 }
 
 type TaskConfig struct {
-	Category   string            `yaml:"category"`
-	Type       string            `yaml:"type"`
-	Parameters map[string]string `yaml:"parameters"`
+	Category       string `yaml:"category"`
+	Type           string `yaml:"type"`
+	TaskParameters `yaml:"parameters"`
 }
+
+type TaskParameters map[string]interface{}
 
 type Config struct {
 	Host  HostConfig   `yaml:"host"`
@@ -29,7 +31,7 @@ type FactConfig struct {
 }
 
 func LoadConfig(configFile string) (*Config, error) {
-	data, err := ioutil.ReadFile(configFile)
+	data, err := os.ReadFile(configFile)
 	if err != nil {
 		return nil, err
 	}

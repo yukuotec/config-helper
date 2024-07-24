@@ -1,6 +1,7 @@
 package task
 
 import (
+	"config-helper/config"
 	"config-helper/dirs"
 	"config-helper/files"
 	"config-helper/shell"
@@ -15,7 +16,7 @@ type Task interface {
 }
 
 // Factory function to create tasks
-func NewTask(category string, taskType string, params map[string]string) (Task, error) {
+func NewTask(category string, taskType string, params config.TaskParameters) (Task, error) {
 	switch category {
 	case "dirs":
 		return newDirTask(taskType, params)
@@ -31,7 +32,7 @@ func NewTask(category string, taskType string, params map[string]string) (Task, 
 	}
 }
 
-func newDirTask(taskType string, params map[string]string) (Task, error) {
+func newDirTask(taskType string, params config.TaskParameters) (Task, error) {
 	switch taskType {
 	case "ensureDir":
 		return dirs.NewEnsureDirTask(params)
@@ -41,7 +42,7 @@ func newDirTask(taskType string, params map[string]string) (Task, error) {
 	}
 }
 
-func newFileTask(taskType string, params map[string]string) (Task, error) {
+func newFileTask(taskType string, params config.TaskParameters) (Task, error) {
 	switch taskType {
 	case "lineInFile":
 		return files.NewLineInFileTask(params)
@@ -55,15 +56,17 @@ func newFileTask(taskType string, params map[string]string) (Task, error) {
 	}
 }
 
-func newNetworkTask(taskType string, params map[string]string) (Task, error) {
+func newNetworkTask(taskType string, params config.TaskParameters) (Task, error) {
 	// Define and implement network tasks similarly
 	return nil, fmt.Errorf("network tasks not implemented")
 }
 
-func newShellTask(taskType string, params map[string]string) (Task, error) {
+func newShellTask(taskType string, params config.TaskParameters) (Task, error) {
 	switch taskType {
 	case "shellExec":
 		return shell.NewShellExecTask(params)
+	case "shellExecBatch":
+		return shell.NewShellExecBatchTask(params)
 	// Add other file tasks here
 	default:
 		return nil, fmt.Errorf("unknown shell task type: %s", taskType)

@@ -1,0 +1,18 @@
+host:
+  host: "localhost:2222"
+  user: "vagrant"
+  keyPath: "./private_key"
+
+facts:
+  commands:
+    - "cat /proc/meminfo | grep MemTotal"
+
+tasks:
+  - category: "shell"
+    type: "shellExecBatch"
+    parameters:
+      commands: 
+        - "systemctl stop firewalld"
+        - "systemctl disable firewalld"
+        - "systemctl disable iptables"
+        - "systemctl stop iptables"

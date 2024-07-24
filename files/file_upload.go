@@ -2,9 +2,10 @@ package files
 
 import (
 	"fmt"
-	"io/ioutil"
 	"log"
+	"os"
 
+	"config-helper/config"
 	"config-helper/sshclient"
 )
 
@@ -15,12 +16,12 @@ type FileUploadTask struct {
 }
 
 // NewFileUploadTask creates a new FileUploadTask
-func NewFileUploadTask(params map[string]string) (*FileUploadTask, error) {
-	localPath, ok := params["localPath"]
+func NewFileUploadTask(params config.TaskParameters) (*FileUploadTask, error) {
+	localPath, ok := params["localPath"].(string)
 	if !ok {
 		return nil, fmt.Errorf("missing parameter: localPath")
 	}
-	remotePath, ok := params["remotePath"]
+	remotePath, ok := params["remotePath"].(string)
 	if !ok {
 		return nil, fmt.Errorf("missing parameter: remotePath")
 	}
@@ -36,7 +37,7 @@ func (t *FileUploadTask) Validate() error {
 }
 
 func (t *FileUploadTask) Execute(client *sshclient.Client) error {
-	fileContent, err := ioutil.ReadFile(t.LocalPath)
+	fileContent, err := os.ReadFile(t.LocalPath)
 	if err != nil {
 		return fmt.Errorf("failed to read file '%s': %v", t.LocalPath, err)
 	}

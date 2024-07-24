@@ -39,3 +39,11 @@ tasks:
     parameters:
       localPath: "./test.yaml"
       remotePath: "/tmp/test2.yaml"
+  - category: "shell"
+    type: "shellExecBatch"
+    parameters:
+      commands: 
+        - "systemctl stop firewalld"
+        - "systemctl disable firewalld"
+        - "systemctl stop iptables"
+        - "systemctl disable iptables"
